@@ -14,3 +14,4 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+ 
