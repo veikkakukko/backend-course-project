@@ -5,8 +5,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: quizgame
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppw
     ports:
       - "3300:3306"
     volumes:
