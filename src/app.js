@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const authRouter = require("./routes/auth");
 const questionsRouter = require("./routes/questions");
+const topfiveRouter = require("./routes/topfive");
 const path = require('path');
 const prisma = require("./lib/prisma");
 const pinoHttp = require("pino-http");
@@ -22,6 +23,7 @@ app.use(express.json());
 // everything under /api/questions
 app.use("/api/questions", questionsRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/topfive", topfiveRouter);
 
 app.use((req, res, next) => {
   next(new NotFoundError());
