@@ -246,9 +246,9 @@ router.get("/random", async (req, res) => {
 
     // raw query since Prisma doesn't support random queries
     const randomQuestions = await prisma.$queryRaw`
-        SELECT id, q, a, "imageUrl"
+        SELECT id, q, a, imageUrl
         FROM questions
-        ORDER BY RANDOM()
+        ORDER BY RAND()
         LIMIT 10
     `;
 
