@@ -316,7 +316,7 @@ async function showQuestionForm(qId) {
         </div>
         <div class="form-group">
           <label for="q-keywords">Keywords (comma-separated)</label>
-          <input type="text" id="q-keywords" value="${q.keywords ? q.keywords.join(", ") : ""}" />
+          <input type="text" id="q-keywords" value="${q.keywords ? q.keywords.map(k => k.name).join(", ") : ""}" />
         </div>
         <div class="form-group">
           <label for="q-image">Image ${isEdit ? "(leave blank to keep current)" : "(optional)"}</label>

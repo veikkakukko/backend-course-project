@@ -23,11 +23,11 @@ app.use(express.json());
 app.use("/api/questions", questionsRouter);
 app.use("/api/auth", authRouter);
 
-app.use(errorHandler);
-
-app.use((req, res) => {
-  throw new NotFoundError();
+app.use((req, res, next) => {
+  next(new NotFoundError());
 });
+
+app.use(errorHandler);
 
 
 module.exports = app;

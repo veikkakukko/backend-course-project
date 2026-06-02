@@ -115,12 +115,22 @@ router.get("/:questionId", async (req, res) => {
 // POST /api/questions
 router.post("/", upload.single("image"), async (req, res) => {
     const { q, a } = QuestionInput.parse(req.body);
-
-    //const imageUrl = req.file ? `/uploads/${req.file.filename}`:null;
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const keywordNames = req.body.keywords
+        ? req.body.keywords.split(",").map(k => k.trim()).filter(Boolean)
+        : [];
 
     const newQuestion = await prisma.question.create({
-        data: {q, a, userId: req.user.userId, imageUrl: imageUrl},
+        data: {
+            q, a, userId: req.user.userId, imageUrl,
+            keywords: {
+                connectOrCreate: keywordNames.map(name => ({
+                    where: { name },
+                    create: { name },
+                })),
+            },
+        },
+        include: { keywords: true },
     });
 
     res.status(201).json(formatQuestion(newQuestion));
@@ -144,16 +154,26 @@ router.put("/:questionId", isOwner, upload.single("image"), async (req, res) => 
         throw new ValidationError("Question and answer are required.");
     }
 
-    const imageUrl = req.file ? `/uploads/${req.file.filename}`:null;
-
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const keywordNames = req.body.keywords
+        ? req.body.keywords.split(",").map(k => k.trim()).filter(Boolean)
+        : [];
 
     const updatedQuestion = await prisma.question.update({
         where: { id: questionId },
         data: {
-            q, a, imageUrl
+            q, a, imageUrl,
+            keywords: {
+                set: [],
+                connectOrCreate: keywordNames.map(name => ({
+                    where: { name },
+                    create: { name },
+                })),
+            },
         },
-        include: { 
+        include: {
             user: true,
+            keywords: true,
             attempts: { where: { userId: req.user.userId }, take: 1 },
         },
     });
