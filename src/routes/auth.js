@@ -5,9 +5,20 @@ const jwt = require("jsonwebtoken");
 const prisma = require("../lib/prisma");
 
 const SECRET = process.env.JWT_SECRET;
+const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET;
 
 const { ValidationError, ConflictError, UnauthorizedError }
   = require("../lib/errors");
+
+async function verifyTurnstile(token) {
+  const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ secret: TURNSTILE_SECRET, response: token }),
+  });
+  const data = await res.json();
+  return data.success === true;
+}
 
 // POST /api/auth/register
 router.post("/register", async (req, res) => {
@@ -15,6 +26,11 @@ router.post("/register", async (req, res) => {
 
   if (!email || !password || !name) {
     throw new ValidationError("email, password and name are required");
+  }
+
+  const turnstileToken = req.body["cf-turnstile-response"];
+  if (!turnstileToken || !(await verifyTurnstile(turnstileToken))) {
+    throw new ValidationError("CAPTCHA verification failed");
   }
 
   // Check if user already exists

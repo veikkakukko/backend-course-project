@@ -66,6 +66,7 @@ function renderAuthForm() {
           </div>`;
         })
         .join("")}
+      ${isRegisterMode ? `<div class="cf-turnstile" data-sitekey="0x4AAAAAADdenSf8rTOiKm22" style="margin-bottom:1rem"></div>` : ""}
       <button type="submit">${title}</button>
     </form>
     <p class="switch-text">${switchText}</p>
@@ -93,6 +94,9 @@ async function handleAuth(e) {
   fields.forEach((f) => {
     body[f] = document.getElementById(f).value;
   });
+  if (isRegisterMode) {
+    body["cf-turnstile-response"] = document.querySelector('[name="cf-turnstile-response"]')?.value || "";
+  }
 
   try {
     const data = await apiFetch(route, {
