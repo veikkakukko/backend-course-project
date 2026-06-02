@@ -241,4 +241,20 @@ router.delete("/:questionId", isOwner, async (req, res) => {
 });
 
 
+// GET /api/questions/random
+router.get("/random", async (req, res) => {
+
+    // raw query since Prisma doesn't support random queries
+    const randomQuestions = await prisma.$queryRaw`
+        SELECT id, q, a, "imageUrl"
+        FROM questions
+        ORDER BY RANDOM()
+        LIMIT 10
+    `;
+
+    res.json(randomQuestions)
+
+});
+
+
 module.exports = router;
