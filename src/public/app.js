@@ -80,6 +80,13 @@ function renderAuthForm() {
     isRegisterMode = !isRegisterMode;
     renderAuthForm();
   });
+
+  if (isRegisterMode) {
+    const el = document.querySelector("#auth-form .cf-turnstile");
+    if (window.turnstile) {
+      turnstile.render(el, { sitekey: "0x4AAAAAADdenSf8rTOiKm22" });
+    }
+  }
 }
 
 async function handleAuth(e) {
